@@ -15,5 +15,5 @@ $script->add($getShaCommand);
  * So instead, we seem to have to add 'getsha' as a first argument.
  * @see https://symfony.com/doc/current/components/console/changing_default_command.html
  */
-//$script->setDefaultCommand($getShaCommand->getName());
+$script->setDefaultCommand($getShaCommand->getName(), true);
 $script->run();

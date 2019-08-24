@@ -5,8 +5,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Commands\\": "commands"
-        },
-        "classmap": ["commands"]
+            "App\\Commands\\": "commands",
+            "App\\Builders\\": "builders",
+            "App\\Services\\": "services"
+        }
     }
 }

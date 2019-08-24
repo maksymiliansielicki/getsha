@@ -6,7 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-$getShaCommand = new Commands\GetShaCommand();
+$getShaCommand = new \App\Commands\GetShaCommand();
 
 $script = new Application();
 $script->add($getShaCommand);

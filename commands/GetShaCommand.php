@@ -1,6 +1,6 @@
 <?php
 
-namespace Commands;
+namespace App\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,34 +24,12 @@ class GetShaCommand extends Command
     {
         $this->validate($input);
 
-        $output->write($this->getSha($input->getArgument('repo'), $input->getArgument('branch')));
-    }
+        $service = new \App\Services\GetShaService(
+            new \App\Builders\UriBuilder($input),
+            new \GuzzleHttp\Client()
+        );
 
-    /**
-     * @param string $repo
-     * @param string $branch
-     * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Exception
-     */
-    private function getSha(string $repo, string $branch)
-    {
-        $client = new \GuzzleHttp\Client();
-
-        try {
-            /** @var string $uri */
-            $uri = 'https://api.github.com/repos/' . $repo . '/branches/' . $branch;
-
-            /** @var \GuzzleHttp\Psr7\Response $response */
-            $response = $client->request('GET', $uri);
-
-            /** @var \stdClass $contents */
-            $contents = \GuzzleHttp\json_decode($response->getBody()->getContents());
-
-            return $contents->commit->sha;
-        } catch(\Exception $exception) {
-            throw new \Exception('Error has occured while connecting to the website');
-        }
+        $output->write($service->getSha());
     }
 
     /**
@@ -59,7 +37,7 @@ class GetShaCommand extends Command
      * @return bool
      * @throws \Exception
      */
-    private function validateArguments(InputInterface $input)
+    private function validate(InputInterface $input)
     {
         if (!$input->getArgument('repo')) {
             throw new \Exception('The repository has not been defined');
@@ -70,30 +48,5 @@ class GetShaCommand extends Command
         }
 
         return true;
-    }
-
-    /**
-     * @param InputInterface $input
-     * @return bool
-     * @throws \Exception
-     */
-    private function validateOptions(InputInterface $input)
-    {
-        if ($input->getOption('service')) {
-            throw new \Exception('Sorry, only GitHub is supported at this time.');
-        }
-
-        return true;
-    }
-
-    /**
-     * @param InputInterface $input
-     * @throws \Exception
-     */
-    private function validate(InputInterface $input)
-    {
-        $this->validateOptions($input);
-
-        $this->validateArguments($input);
     }
 }

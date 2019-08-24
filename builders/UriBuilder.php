@@ -11,6 +11,10 @@ class UriBuilder
      */
     private $input;
 
+    /**
+     * UriBuilder constructor.
+     * @param InputInterface $input
+     */
     public function __construct(InputInterface $input)
     {
         $this->input = $input;
@@ -26,7 +30,7 @@ class UriBuilder
     {
         // TODO: When the support for other services is introduced, the condition below can be deleted.
         if ($this->input->getOption('service')) {
-            throw new \Exception('Unfortunately, only GitHub is supported at this time.');
+            throw new \Exception('Unfortunately, only GitHub is supported at this time');
         }
 
         switch($this->input->getOption('service')) {

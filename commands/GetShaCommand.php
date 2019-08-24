@@ -24,25 +24,33 @@ class GetShaCommand extends Command
     {
         $this->validate($input);
 
-        $output->write($this->getSha());
+        $output->write($this->getSha($input->getArgument('repo'), $input->getArgument('branch')));
     }
 
     /**
+     * @param string $repo
+     * @param string $branch
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
-    private function getSha()
+    private function getSha(string $repo, string $branch)
     {
         $client = new \GuzzleHttp\Client();
 
         try {
-            $response = $client->request('GET', 'https://api.github.com/repos/maxmeister/dompdf/branches/master');
+            /** @var string $uri */
+            $uri = 'https://api.github.com/repos/' . $repo . '/branches/' . $branch;
 
+            /** @var \GuzzleHttp\Psr7\Response $response */
+            $response = $client->request('GET', $uri);
+
+            /** @var \stdClass $contents */
             $contents = \GuzzleHttp\json_decode($response->getBody()->getContents());
 
             return $contents->commit->sha;
         } catch(\Exception $exception) {
-            return 'Error has occured while connecting to the website';
+            throw new \Exception('Error has occured while connecting to the website');
         }
     }
 

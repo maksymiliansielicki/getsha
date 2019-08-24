@@ -14,8 +14,7 @@ class GetShaCommand extends Command
     protected function configure()
     {
         $this->setName('getsha');
-        $this->setDescription('Prints the SHA1 of the last commit to the screen');
-        $this->setHelp('Supported websites: GitHub. Future support will include Bitbucket and GitLab');
+        $this->setDescription('Prints the SHA1 of the last commit of the chosen repository to the screen. Supported websites: GitHub. Future support will include Bitbucket and GitLab');
         $this->addArgument('repo', null, InputOption::VALUE_REQUIRED);
         $this->addArgument('branch', null, InputOption::VALUE_REQUIRED);
         $this->addOption('service', null, InputOption::VALUE_OPTIONAL);
@@ -28,11 +27,23 @@ class GetShaCommand extends Command
         $output->write($this->getSha());
     }
 
+    /**
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     private function getSha()
     {
-        $sha1 = exec('git rev-parse HEAD');
+        $client = new \GuzzleHttp\Client();
 
-        return $sha1;
+        try {
+            $response = $client->request('GET', 'https://api.github.com/repos/maxmeister/dompdf/branches/master');
+
+            $contents = \GuzzleHttp\json_decode($response->getBody()->getContents());
+
+            return $contents->commit->sha;
+        } catch(\Exception $exception) {
+            return 'Error has occured while connecting to the website';
+        }
     }
 
     /**

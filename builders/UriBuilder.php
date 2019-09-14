@@ -33,7 +33,7 @@ class UriBuilder
             throw new \Exception('Unfortunately, only GitHub is supported at this time');
         }
 
-        switch($this->input->getOption('service')) {
+        switch ($this->input->getOption('service')) {
             default:
                 return $this->buildForGithub();
         }
